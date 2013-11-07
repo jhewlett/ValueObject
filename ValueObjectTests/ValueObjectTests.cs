@@ -213,5 +213,26 @@ namespace ValueObjectTests
             Assert.IsFalse(value1 == value2);
             Assert.IsFalse(value1.Equals(value2));
         }
+
+        [TestMethod]
+        public void Nesting()
+        {
+            var value = new Recursive();
+            var value2 = new Recursive();
+            var nestedValue = new Recursive() { Regular = "test" };
+            var nestedValue2 = new Recursive() { Regular = "test" };
+
+            value.Prop = nestedValue;
+            value2.Prop = nestedValue2;
+
+            Assert.IsTrue(value.Equals(value2));
+            Assert.AreEqual(value.GetHashCode(), value2.GetHashCode());
+        }
+    }
+
+    class Recursive : ValueObject<Recursive>
+    {
+        public Recursive Prop { get; set;}
+        public string Regular;
     }
 }

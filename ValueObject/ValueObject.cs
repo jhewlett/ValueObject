@@ -11,7 +11,7 @@ namespace ValueObject
     //{
     //}
 
-    public class ValueObject<T> : IEquatable<T> where T : class
+    public abstract class ValueObject<T> : IEquatable<T> where T : class
     {
         public static bool operator ==(ValueObject<T> obj1, ValueObject<T> obj2)
         {
