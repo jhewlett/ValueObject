@@ -214,25 +214,54 @@ namespace ValueObjectTests
             Assert.IsFalse(value1.Equals(value2));
         }
 
+        class Recursive : ValueObject<Recursive>
+        {
+            public Recursive Recurse { get; set; }
+            public string Terminal;
+        }
+
         [TestMethod]
         public void Nesting()
         {
             var value = new Recursive();
             var value2 = new Recursive();
-            var nestedValue = new Recursive() { Regular = "test" };
-            var nestedValue2 = new Recursive() { Regular = "test" };
+            var nestedValue = new Recursive() { Terminal = "test" };
+            var nestedValue2 = new Recursive() { Terminal = "test" };
 
-            value.Prop = nestedValue;
-            value2.Prop = nestedValue2;
+            value.Recurse = nestedValue;
+            value2.Recurse = nestedValue2;
 
             Assert.IsTrue(value.Equals(value2));
             Assert.AreEqual(value.GetHashCode(), value2.GetHashCode());
         }
+
+        class Ignore : ValueObject<Ignore>
+        {
+            [IgnoreMember]
+            public int Ignored { get; set; }
+            [IgnoreMember]
+            public int IgnoredField;
+            public int Considered { get; set; }
+        }
+
+        [TestMethod]
+        public void IgnoreMember_Property_DoesNotConsider()
+        {
+            var value1 = new Ignore { Ignored = 2, Considered = 4 };
+            var value2 = new Ignore { Ignored = 3, Considered = 4 };
+
+            Assert.IsTrue(value1.Equals(value2));
+        }
+
+        [TestMethod]
+        public void IgnoreMember_Field_DoesNotConsider()
+        {
+            var value1 = new Ignore { IgnoredField = 3, Considered = 4 };
+            var value2 = new Ignore { IgnoredField = 2, Considered = 4 };
+
+            Assert.IsTrue(value1.Equals(value2));
+        }
     }
 
-    class Recursive : ValueObject<Recursive>
-    {
-        public Recursive Prop { get; set;}
-        public string Regular;
-    }
+    
 }

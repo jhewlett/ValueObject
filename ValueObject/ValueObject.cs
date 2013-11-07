@@ -7,10 +7,6 @@ using System.Threading.Tasks;
 
 namespace ValueObject
 {
-    //public class IgnoreAttribute : Attribute
-    //{
-    //}
-
     public abstract class ValueObject<T> : IEquatable<T> where T : class
     {
         public static bool operator ==(ValueObject<T> obj1, ValueObject<T> obj2)
@@ -56,13 +52,14 @@ namespace ValueObject
 
         private IEnumerable<PropertyInfo> GetProperties()
         {
-            return GetType().GetProperties(BindingFlags.Instance | BindingFlags.Public);
-                //.Where(p => p.GetCustomAttribute(typeof(IgnoreAttribute)) != null);
+            return GetType().GetProperties(BindingFlags.Instance | BindingFlags.Public)
+                .Where(p => !Attribute.IsDefined(p, typeof(IgnoreMemberAttribute)));
         }
 
-        private FieldInfo[] GetFields()
+        private IEnumerable<FieldInfo> GetFields()
         {
-            return GetType().GetFields(BindingFlags.Instance | BindingFlags.Public);
+            return GetType().GetFields(BindingFlags.Instance | BindingFlags.Public)
+                .Where(f => !Attribute.IsDefined(f, typeof(IgnoreMemberAttribute)));
         }
 
         public override int GetHashCode()
