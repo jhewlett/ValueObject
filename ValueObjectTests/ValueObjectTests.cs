@@ -86,11 +86,63 @@ namespace ValueObjectTests
         }
 
         [TestMethod]
+        public void Equals_ComparingWithNull_ReturnsFalse()
+        {
+            var value = new TestValue { Property1 = "string" };
+
+            Assert.IsFalse(value.Equals(null as object));
+        }
+
+        [TestMethod]
         public void Equals_ComparingWithWrongType_ReturnsFalse()
         {
             var value = new TestValue { Property1 = "string" };
 
-            Assert.AreNotEqual(value, null);
+            Assert.IsFalse(value.Equals(10));
+        }
+
+        [TestMethod]
+        public void OperatorEquals_LeftSideNull_ReturnsFalse()
+        {
+            var value = new TestValue();
+
+            Assert.IsFalse(null == value);
+        }
+
+        [TestMethod]
+        public void OperatorEquals_RightSideNull_ReturnsFalse()
+        {
+            var value = new TestValue();
+
+            Assert.IsFalse(value == null);
+        }
+
+        [TestMethod]
+        public void OperatorEquals_BothValuesNull_ReturnsTrue()
+        {
+            Assert.IsTrue((TestValue)null == (TestValue)null);
+        }
+
+        [TestMethod]
+        public void OperatorNotEquals_LeftSideNull_ReturnsTrue()
+        {
+            var value = new TestValue();
+
+            Assert.IsTrue(null != value);
+        }
+
+        [TestMethod]
+        public void OperatorNotEquals_RightSideNull_ReturnsTrue()
+        {
+            var value = new TestValue();
+
+            Assert.IsTrue(value != null);
+        }
+
+        [TestMethod]
+        public void OperatorNotEquals_BothValuesNull_ReturnsFalse()
+        {
+            Assert.IsFalse((TestValue)null != (TestValue)null);
         }
 
         [TestMethod]

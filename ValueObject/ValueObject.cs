@@ -15,12 +15,20 @@ namespace ValueObject
     {
         public static bool operator ==(ValueObject<T> obj1, ValueObject<T> obj2)
         {
+            if (object.Equals(obj1, null))
+            {
+                if (object.Equals(obj2, null))
+                {
+                    return true;
+                }
+                return false;
+            }
             return obj1.Equals(obj2);
         }
 
         public static bool operator !=(ValueObject<T> obj1, ValueObject<T> obj2)
         {
-            return !obj1.Equals(obj2);
+            return !(obj1 == obj2);
         }
 
         public bool Equals(T obj)
@@ -30,19 +38,20 @@ namespace ValueObject
 
         public override bool Equals(object obj)
         {
+            if (obj == null || !typeof(ValueObject<T>).IsAssignableFrom(obj.GetType())) return false;
+            
             return GetProperties().All(p => PropertiesAreEqual(obj, p))
-                && GetFields().All(f => object.Equals(f.GetValue(this), f.GetValue(obj)));
+                && GetFields().All(f => FieldsAreEqual(obj, f));
         }
 
         private bool PropertiesAreEqual(object obj, PropertyInfo p)
+        {       
+            return object.Equals(p.GetValue(this, null), p.GetValue(obj, null));
+        }
+
+        private bool FieldsAreEqual(object obj, FieldInfo f)
         {
-            //get test failing when obj is null
-            //if (obj.GetType() != typeof(ValueObject<T>)) return false;
-
-            var thisValue = p.GetValue(this, null);
-            var otherValue = p.GetValue(obj, null);
-
-            return object.Equals(thisValue, otherValue);
+            return object.Equals(f.GetValue(this), f.GetValue(obj));
         }
 
         private IEnumerable<PropertyInfo> GetProperties()
