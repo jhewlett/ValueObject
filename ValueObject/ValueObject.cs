@@ -5,11 +5,11 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ValueObject
+namespace Value
 {
-    public abstract class ValueObject<T> : IEquatable<T> where T : class
+    public abstract class ValueObject : IEquatable<ValueObject>
     {
-        public static bool operator ==(ValueObject<T> obj1, ValueObject<T> obj2)
+        public static bool operator ==(ValueObject obj1, ValueObject obj2)
         {
             if (object.Equals(obj1, null))
             {
@@ -22,19 +22,19 @@ namespace ValueObject
             return obj1.Equals(obj2);
         }
 
-        public static bool operator !=(ValueObject<T> obj1, ValueObject<T> obj2)
+        public static bool operator !=(ValueObject obj1, ValueObject obj2)
         {
             return !(obj1 == obj2);
         }
 
-        public bool Equals(T obj)
+        public bool Equals(ValueObject obj)
         {
             return Equals(obj as object);
         }
 
         public override bool Equals(object obj)
         {
-            if (obj == null || !typeof(ValueObject<T>).IsAssignableFrom(obj.GetType())) return false;
+            if (obj == null || GetType() != obj.GetType()) return false;
             
             return GetProperties().All(p => PropertiesAreEqual(obj, p))
                 && GetFields().All(f => FieldsAreEqual(obj, f));

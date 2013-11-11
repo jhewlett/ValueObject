@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ValueObject
+namespace Value
 {
     [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field)]
     public class IgnoreMemberAttribute : Attribute

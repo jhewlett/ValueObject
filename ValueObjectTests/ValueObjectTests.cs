@@ -1,12 +1,12 @@
 ﻿using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using ValueObject;
+using Value;
 using System.Windows;
 using System.Drawing;
 
 namespace ValueObjectTests
 {
-    class TestValue : ValueObject<TestValue>
+    class TestValue : ValueObject
     {
         public TestValue() { }
 
@@ -150,7 +150,7 @@ namespace ValueObjectTests
         {
             var value = new TestValue();
 
-            Assert.IsInstanceOfType(value, typeof(IEquatable<TestValue>));
+            Assert.IsInstanceOfType(value, typeof(IEquatable<ValueObject>));
         }
 
         [TestMethod]
@@ -214,7 +214,7 @@ namespace ValueObjectTests
             Assert.IsFalse(value1.Equals(value2));
         }
 
-        class Recursive : ValueObject<Recursive>
+        class Recursive : ValueObject
         {
             public Recursive Recurse { get; set; }
             public string Terminal;
@@ -235,7 +235,7 @@ namespace ValueObjectTests
             Assert.AreEqual(value.GetHashCode(), value2.GetHashCode());
         }
 
-        class Ignore : ValueObject<Ignore>
+        class Ignore : ValueObject
         {
             [IgnoreMember]
             public int Ignored { get; set; }
@@ -261,7 +261,23 @@ namespace ValueObjectTests
 
             Assert.IsTrue(value1.Equals(value2));
         }
-    }
 
-    
+        class MyValue : ValueObject
+        {
+            public int Num;
+        }
+
+        class MyValue2 : MyValue
+        {
+        }
+
+        [TestMethod]
+        public void ObjectsOfDifferentTypeAreNotEqual_EvenIfSubclass()
+        {
+            var value1 = new MyValue();
+            var value2 = new MyValue2();
+
+            Assert.IsFalse(value1.Equals(value2));
+        }
+    }
 }
