@@ -10,7 +10,7 @@ To create a value object, simply inherit from ValueObject. By default, two objec
 To prevent a public property or field from being considered in memberwise comparisons, decorate it with an `IgnoreMember` attribute.
 
 ```c#
-class Customer : ValueObject<Customer>
+class Customer : ValueObject
 {
     public string Name { get; set; }
     public int Age;
