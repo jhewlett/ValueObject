@@ -3,3 +3,4 @@ TestResults/
 bin/
 obj/
 Properties/
+nuget/

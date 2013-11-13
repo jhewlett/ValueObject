@@ -1,0 +1,1 @@
+nuget pack ValueObject.csproj -Prop Configuration=Release -Prop Platform=AnyCPU -Build -OutputDirectory "nuget"
