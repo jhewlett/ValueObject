@@ -9,6 +9,9 @@ namespace Value
 {
     public abstract class ValueObject : IEquatable<ValueObject>
     {
+        private List<PropertyInfo> properties;
+        private List<FieldInfo> fields;
+
         public static bool operator ==(ValueObject obj1, ValueObject obj2)
         {
             if (object.Equals(obj1, null))
@@ -52,14 +55,24 @@ namespace Value
 
         private IEnumerable<PropertyInfo> GetProperties()
         {
-            return GetType().GetProperties(BindingFlags.Instance | BindingFlags.Public)
-                .Where(p => !Attribute.IsDefined(p, typeof(IgnoreMemberAttribute)));
+            if (this.properties == null)
+            {
+                this.properties = GetType().GetProperties(BindingFlags.Instance | BindingFlags.Public)
+                    .Where(p => !Attribute.IsDefined(p, typeof(IgnoreMemberAttribute))).ToList();
+            }
+
+            return this.properties;
         }
 
         private IEnumerable<FieldInfo> GetFields()
         {
-            return GetType().GetFields(BindingFlags.Instance | BindingFlags.Public)
-                .Where(f => !Attribute.IsDefined(f, typeof(IgnoreMemberAttribute)));
+            if (this.fields == null)
+            {
+                this.fields = GetType().GetFields(BindingFlags.Instance | BindingFlags.Public)
+                    .Where(f => !Attribute.IsDefined(f, typeof(IgnoreMemberAttribute))).ToList();
+            }
+
+            return this.fields;
         }
 
         public override int GetHashCode()
