@@ -53,13 +53,15 @@
   </Choose>
   <ItemGroup>
     <Compile Include="ValueObjectTests.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ValueObject\ValueObject.csproj">
       <Project>{92e3da80-5dfa-496e-8f50-d9531097df1d}</Project>
       <Name>ValueObject</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Properties\" />
   </ItemGroup>
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">

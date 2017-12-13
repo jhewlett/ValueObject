@@ -2,15 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Value
 {
     public abstract class ValueObject : IEquatable<ValueObject>
     {
-        private List<PropertyInfo> properties;
-        private List<FieldInfo> fields;
+        private static Dictionary<Type, List<PropertyInfo>> properties = new Dictionary<Type, List<PropertyInfo>>();
+        private static Dictionary<Type, List<FieldInfo>> fields = new Dictionary<Type, List<FieldInfo>>();
 
         public static bool operator ==(ValueObject obj1, ValueObject obj2)
         {
@@ -55,24 +53,26 @@ namespace Value
 
         private IEnumerable<PropertyInfo> GetProperties()
         {
-            if (this.properties == null)
+            Type type = GetType();
+            if (!properties.ContainsKey(type))
             {
-                this.properties = GetType().GetProperties(BindingFlags.Instance | BindingFlags.Public)
+                properties[type] = GetType().GetProperties(BindingFlags.Instance | BindingFlags.Public)
                     .Where(p => !Attribute.IsDefined(p, typeof(IgnoreMemberAttribute))).ToList();
             }
 
-            return this.properties;
+            return properties[type];
         }
 
         private IEnumerable<FieldInfo> GetFields()
         {
-            if (this.fields == null)
+            Type type = GetType();
+            if (!fields.ContainsKey(type))
             {
-                this.fields = GetType().GetFields(BindingFlags.Instance | BindingFlags.Public)
+                fields[type] = GetType().GetFields(BindingFlags.Instance | BindingFlags.Public)
                     .Where(f => !Attribute.IsDefined(f, typeof(IgnoreMemberAttribute))).ToList();
             }
 
-            return this.fields;
+            return fields[type];
         }
 
         public override int GetHashCode()
