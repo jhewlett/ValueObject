@@ -7,22 +7,14 @@ using System.Threading.Tasks;
 
 namespace Value
 {
-    public abstract class ValueObject : IEquatable<ValueObject>
+     public abstract class ValueObject : IEquatable<ValueObject>
     {
-        private List<PropertyInfo> properties;
-        private List<FieldInfo> fields;
+        private List<PropertyInfo> _properties;
+        private List<FieldInfo> _fields;
 
         public static bool operator ==(ValueObject obj1, ValueObject obj2)
         {
-            if (object.Equals(obj1, null))
-            {
-                if (object.Equals(obj2, null))
-                {
-                    return true;
-                }
-                return false;
-            }
-            return obj1.Equals(obj2);
+            return !Equals(obj1, null) ? obj1.Equals(obj2) : object.Equals(obj2, null);
         }
 
         public static bool operator !=(ValueObject obj1, ValueObject obj2)
@@ -38,69 +30,44 @@ namespace Value
         public override bool Equals(object obj)
         {
             if (obj == null || GetType() != obj.GetType()) return false;
-            
+
             return GetProperties().All(p => PropertiesAreEqual(obj, p))
-                && GetFields().All(f => FieldsAreEqual(obj, f));
+                   && GetFields().All(f => FieldsAreEqual(obj, f));
         }
 
         private bool PropertiesAreEqual(object obj, PropertyInfo p)
-        {       
-            return object.Equals(p.GetValue(this, null), p.GetValue(obj, null));
+        {
+            return Equals(p.GetValue(this, null), p.GetValue(obj, null));
         }
 
         private bool FieldsAreEqual(object obj, FieldInfo f)
         {
-            return object.Equals(f.GetValue(this), f.GetValue(obj));
+            return Equals(f.GetValue(this), f.GetValue(obj));
         }
 
         private IEnumerable<PropertyInfo> GetProperties()
         {
-            if (this.properties == null)
-            {
-                this.properties = GetType().GetProperties(BindingFlags.Instance | BindingFlags.Public)
-                    .Where(p => !Attribute.IsDefined(p, typeof(IgnoreMemberAttribute))).ToList();
-            }
-
-            return this.properties;
+            return this._properties ?? (this._properties = GetType()
+                       .GetProperties(BindingFlags.Instance | BindingFlags.Public)
+                       .Where(p => !Attribute.IsDefined(p, typeof(IgnoreMemberAttribute))).ToList());
         }
 
         private IEnumerable<FieldInfo> GetFields()
         {
-            if (this.fields == null)
-            {
-                this.fields = GetType().GetFields(BindingFlags.Instance | BindingFlags.Public)
-                    .Where(f => !Attribute.IsDefined(f, typeof(IgnoreMemberAttribute))).ToList();
-            }
-
-            return this.fields;
+            return this._fields ?? (_fields = GetType().GetFields(BindingFlags.Instance | BindingFlags.Public)
+                       .Where(f => !Attribute.IsDefined(f, typeof(IgnoreMemberAttribute))).ToList());
         }
 
         public override int GetHashCode()
         {
-            unchecked   //allow overflow
-            {
-                int hash = 17;
-                foreach (var prop in GetProperties())
-                {   
-                    var value = prop.GetValue(this, null);
-                    hash = HashValue(hash, value);
-                }
+            var hash = GetProperties().Select(prop => prop.GetValue(this, null)).Aggregate(17, HashValue);
 
-                foreach(var field in GetFields())
-                {
-                    var value = field.GetValue(this);
-                    hash = HashValue(hash, value);
-                }
-
-                return hash;
-            }
+            return GetFields().Select(field => field.GetValue(this)).Aggregate(hash, HashValue);
         }
 
         private int HashValue(int seed, object value)
         {
-            var currentHash = value != null
-                ? value.GetHashCode()
-                : 0;
+            var currentHash = value?.GetHashCode() ?? 0;
 
             return seed * 23 + currentHash;
         }
