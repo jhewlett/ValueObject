@@ -1,8 +1,6 @@
 ﻿using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Value;
-using System.Windows;
-using System.Drawing;
 
 namespace ValueObjectTests
 {
