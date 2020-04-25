@@ -29,3 +29,6 @@ var customer2 = new Customer{ Name = "John", Age = 13, Address = "Florida" };
 Debug.Assert(customer1 == customer2);
 ```
 
+Use F# Records?
+---------------
+Are you sure you don't want to just [create F# records in a F# project, and consume them from C#](https://www.pluralsight.com/tech-blog/immutable-objects-in-csharp/)? 
