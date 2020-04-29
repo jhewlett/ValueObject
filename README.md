@@ -1,3 +1,5 @@
+![netstandard](https://img.shields.io/badge/.NET%20Standard-2.0-brightgreen.svg) [![nuget](https://img.shields.io/nuget/v/ValueObject.svg)](https://www.nuget.org/packages/ValueObject) ![License](https://img.shields.io/github/license/jhewlett/ValueObject.svg) ![repo-size](https://img.shields.io/github/repo-size/jhewlett/ValueObject.svg)
+
 ValueObject
 ===========
 
